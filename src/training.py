@@ -342,13 +342,13 @@ def train_experiment(experiment, counter, total_combinations):
         result_dict = epoch_dict
 
         if experiment['plot_result_per_epoch']:
-            plot_intermediate_steps(pre_clf_test, s_test_sex, test_metric, fair_loss,
-                                    experiment['pct_a'], experiment['pct_b'], args=experiment, epoch=epoch)
+            plot_intermediate_steps(pre_clf_test, y_test, s_test_sex, test_metric, fair_loss, experiment['pct_a'],
+                                    pct_b=experiment['pct_b'], args=experiment, epoch=epoch)
 
         if experiment['plot_result_last_epoch']:
             if epoch == experiment['num_epochs'] - 1:
-                plot_intermediate_steps(pre_clf_test, s_test_sex, test_metric, fair_loss,
-                                        experiment['pct_a'], experiment['pct_b'], args=experiment, epoch=epoch)
+                plot_intermediate_steps(pre_clf_test, y_test, s_test_sex, test_metric, fair_loss, experiment['pct_a'],
+                                        pct_b=experiment['pct_b'], args=experiment, epoch=epoch)
 
         # Log experiment metrics to Wandb
         if experiment['enableWandb']:
@@ -371,8 +371,9 @@ def train_experiment(experiment, counter, total_combinations):
 
                 if experiment['plot_result_last_epoch']:
                     #plot distributions also when early stopping, if desired
-                    plot_intermediate_steps(pre_clf_test, s_test_sex, test_metric, fair_loss,
-                                            experiment['pct_a'], experiment['pct_b'], args=experiment, epoch=epoch)
+                    plot_intermediate_steps(pre_clf_test, y_test, s_test_sex, test_metric, fair_loss,
+                                            experiment['pct_a'],
+                                            pct_b=experiment['pct_b'], args=experiment, epoch=epoch)
 
                 break
 

@@ -22,7 +22,7 @@ import torch.optim as optim
 from aif360.datasets import BinaryLabelDataset
 
 from sklearn import metrics
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, precision_recall_curve, auc
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
@@ -40,88 +40,86 @@ from src.metrics import metric_evaluation
 from src.model import MLP, Logit
 
 
-def plot_intermediate_steps(pre_clf_test, s_test_sex, test_metric, fair_loss, pct_a, pct_b, args, epoch):
+
+def plot_intermediate_steps(pre_clf_test, y_test, s_test_sex, test_metric, fair_loss, pct_a, pct_b, args, epoch):
+
+    # Set the style of the plot
+    plt.style.use('science')
 
     y_pre_1 = pre_clf_test[s_test_sex.flatten() == 1]
     y_pre_0 = pre_clf_test[s_test_sex.flatten() == 0]
 
-    # Plot the distributions
-    sns.kdeplot(y_pre_1, label='s==1')
-    sns.kdeplot(y_pre_0, label='s==0')
+    fig, ax1 = plt.subplots()
 
-    # Fill under the distributions
+    sns.kdeplot(y_pre_0, color='blue', label='s=0', ax=ax1)
+    sns.kdeplot(y_pre_1, color='red', label='s=1', ax=ax1)
+
+    ax1.set_ylabel('Probability density', color='black')
 
     # Add labels and title
-    plt.xlabel('Probability')
-    plt.ylabel('Density')
-    plt.title('Epoch '+str(epoch+1)+': Probability Distribution of y_pre_1 and y_pre_0')
-
-    # Set x-axis limits
+    plt.xlabel('Predicted score')
     plt.xlim(0, 1)
 
     # Add a legend
-    plt.legend()
+    ax1.legend(frameon=True, framealpha=0.5)
 
-    # Display test accuracy value
-    test_accuracy_value = test_metric['test_accuracy']
-    test_abpc_value = test_metric['test_abpc']
-    test_abcc_value = test_metric['test_abcc']
-    test_auc_value = test_metric['test_auc']
-    test_dp_value = test_metric['test_dp']
-    test_precision_value = test_metric['test_precision']
-    test_recall_value = test_metric['test_recall']
+    if args['threshold_based']:
 
-    plt.text(0.7, 0.85, f'Sensitive attribute: {str(args["sensitive_attr"])}', transform=plt.gca().transAxes)
-    plt.text(0.7, 0.80, f'Test ABPC: {test_abpc_value:.4f}', transform=plt.gca().transAxes)
-    plt.text(0.7, 0.75, f'Test ABCC: {test_abcc_value:.4f}', transform=plt.gca().transAxes)
-    plt.text(0.7, 0.70, f'Test dp: {test_dp_value:.4f}', transform=plt.gca().transAxes)
+        # Plot decision area
+        plt.axvline(pct_a, color='grey', linestyle=':')
+        # on x-axis, put $\tau$ at (pct_a, 0):
+        plt.text(pct_a, -0.0, r'$\tau$', verticalalignment='top', horizontalalignment='center', fontsize=14)
 
-    plt.text(0.7, 0.60, f'Test Accuracy: {test_accuracy_value:.4f}', transform=plt.gca().transAxes)
-    plt.text(0.7, 0.55, f'Test AUC: {test_auc_value:.4f}', transform=plt.gca().transAxes)
-    plt.text(0.7, 0.50, f'Test prec: {test_precision_value:.4f}', transform=plt.gca().transAxes)
-    plt.text(0.7, 0.45, f'Test recall: {test_recall_value:.4f}', transform=plt.gca().transAxes)
+    plt.show()
 
-    if True:
 
-        plt.text(0.1, 0.80, f'Prct area.: {pct_a:.2f} - {pct_b:.2f}', transform=plt.gca().transAxes)
+    """ Code for plotting the PR curve (full and local)"""
+    # Plot PR curve
+    ##### local AUC-PR for different precision thresholds
 
-        test_abpc_local_value = test_metric['test_abpc_local']
-        plt.text(0.1, 0.70, f'Test ABPC_local.: {test_abpc_local_value:.4f}', transform=plt.gca().transAxes)
-        test_abcc_local_value = test_metric['test_abcc_local']
-        plt.text(0.1, 0.65, f'Test ABCC_local.: {test_abcc_local_value:.4f}', transform=plt.gca().transAxes)
-        test_abcc_local_value = test_metric['test_dp_local']
-        plt.text(0.1, 0.60, f'Test DP_c_local.: {test_abcc_local_value:.4f}', transform=plt.gca().transAxes)
+    # define precision_at_tau:
+    precision_at_tau = precision_score(y_test, (pre_clf_test >= pct_a).astype(int))
 
-        test_acc_local_value = test_metric['test_accuracy_local']
-        plt.text(0.1, 0.5, f'Test accuracy_local.: {test_acc_local_value:.4f}', transform=plt.gca().transAxes)
-        test_prec_local_value = test_metric['test_precision_local']
-        plt.text(0.1, 0.45, f'Test precision_local.: {test_prec_local_value:.4f}', transform=plt.gca().transAxes)
-        test_rec_local_value = test_metric['test_recall_local']
-        plt.text(0.1, 0.4, f'Test rec_local.: {test_rec_local_value:.4f}', transform=plt.gca().transAxes)
-        test_partial_auc_local_value = test_metric['test_partial_auc']
-        plt.text(0.1, 0.35, f'Test partial_auc.: {test_partial_auc_local_value:.4f}', transform=plt.gca().transAxes)
+    # Compute precision-recall curve
+    precision_auc_pr, recall_auc_pr, _ = precision_recall_curve(y_test, pre_clf_test)
 
-        if args['threshold_based']:
-            plt.axvline(pct_a, color='grey', linestyle=':')
-            plt.axvline(pct_b, color='grey', linestyle=':')
+    # plot the PR curve
+    plt.plot(recall_auc_pr, precision_auc_pr, marker='.', label='PR curve')
 
-        else:
-            # this draws percentile based on whole pop:
-            percentile_a = np.percentile(pre_clf_test, pct_a * 100)
-            plt.axvline(percentile_a, linestyle=':', label='pct_a', color='fuchsia')
+    # plot the local PR curve:
+    # Select indices where precision is at least precision_min
+    valid_indices = np.where(precision_auc_pr >= precision_at_tau)[0]
+    precision_partial = precision_auc_pr[valid_indices]
+    recall_partial = recall_auc_pr[valid_indices]
 
-            # Calculate percentiles
-            pct_low_0 = np.percentile(y_pre_0, pct_a*100)
-            pct_low_1 = np.percentile(y_pre_1, pct_a*100)
-            # Mark the percentiles on the plot
-            plt.axvline(pct_low_0, color='orange', linestyle=':')#, label='s==0')
-            plt.axvline(pct_low_1, linestyle=':')#, label='s==1')
+    # Compute partial AUC-PR using the trapezoidal rule
+    partial_auc_pr = auc(recall_partial, precision_partial)
 
-            # Plot decision area
-            plt.axvline(pct_a, color='grey', linestyle=':')
-            plt.axvline(pct_b, color='grey', linestyle=':')
+    # Compute full AUC-PR
+    full_auc_pr = auc(recall_auc_pr, precision_auc_pr)
 
-    # Show the plot
+    print("Partial AUC-PR (Precision above", precision_at_tau, "):", partial_auc_pr)
+    print("Full AUC-PR:", full_auc_pr)
+
+    # Plot the precision-recall curve
+    plt.figure()
+    plt.plot(recall_auc_pr, precision_auc_pr, color='black', lw=2, label='PR curve (AUC-PR = %0.2f)' % full_auc_pr)
+    plt.plot(recall_partial, precision_partial, color='red', lw=2, linestyle='--',
+             label=r'Partial PR curve ($\text{AUC-PR}_\tau$ = %0.2f)' % partial_auc_pr)
+    plt.fill_between(recall_partial, precision_partial, step='post', alpha=0.1, color='red')
+
+    recall_at_precision = recall_auc_pr[np.argmax(precision_auc_pr >= precision_at_tau)]
+    plt.plot(recall_at_precision, precision_at_tau, marker='o', markersize=8, color='red', label='Decision area cutoff')
+    plt.plot([recall_at_precision, recall_at_precision], [0, precision_at_tau], color='grey', linestyle='--')
+    plt.plot([0, recall_at_precision], [precision_at_tau, precision_at_tau], color='grey', linestyle='--')
+
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title(fr'Partial PR curve for $\tau={pct_a}$')
+    plt.legend(loc="lower left", fontsize=8)
+
     plt.show()
 
 

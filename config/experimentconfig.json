@@ -1,5 +1,5 @@
 {
-    "lam": [0.6],
+    "lam": [0.4],
     "seed": [0],
     "fair_reg": [2],
     "local_reg": [false,true],
