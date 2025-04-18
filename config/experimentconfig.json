@@ -1,0 +1,27 @@
+{
+    "lam": [0.6],
+    "seed": [0],
+    "fair_reg": [2],
+    "local_reg": [false,true],
+    "method": ["MLP"],
+    "sensitive_attr": ["sex"],
+    "pct_a": [0.7],
+    "pct_b": [1.0],
+    "lr": [1e-2],
+    "batch_size": [1024],
+    "MLP_n_hidden_layers": [2],
+    "MLP_hidden_size": [64],
+    "MLP_p_dropout": [0.0],
+    "data_path": ["data/TelecomKaggle"],
+    "num_epochs": [100],
+    "reg_delay": [15],
+    "l2_reg": [0.01],
+    "early_stopping_patience": [20],
+
+    "bin_width" : [0.05],
+    "top_percentile" : [0.315812],
+
+    "semi_synth_bias": ["informed_flip"],
+    "bias_ratio": [0.5],
+    "train_size": [0.67]
+}
