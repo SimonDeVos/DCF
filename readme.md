@@ -1,4 +1,4 @@
-# Decision-centric fairness: Evaluation and optimization for classifcation problems</br><sub><sub>Simon De Vos, Jente Van Belle, Andres Algaba, Wouter Verbeke, Sam Verboven </sub></sub>  
+# Decision-centric fairness: Evaluation and optimization for resource allocation problems</br><sub><sub>Simon De Vos, Jente Van Belle, Andres Algaba, Wouter Verbeke, Sam Verboven </sub></sub>  
 
 The main contributions of this paper are as follows:
 
@@ -78,7 +78,6 @@ This repository is organized as follows:
     |- model.py
     |- training.py
     |- utils.py
-|- main_notebook.ipynb
 |- requirements.txt
 ```
 
