@@ -1,7 +1,10 @@
 # Decision-centric fairness: Evaluation and optimization for resource allocation problems</br><sub><sub>Simon De Vos, Jente Van Belle, Andres Algaba, Wouter Verbeke, Sam Verboven </sub></sub>  
 
-The main contributions of this paper are as follows:
+This paper proposes a decision-centric fairness approach for binary classification models used in resource allocation. It argues that fairness constraints should be applied only within the decision-making region, where predicted scores translate into real-world actions, rather than across the entire score distribution, thereby achieving fairer outcomes with minimal loss in predictive utility.
 
+A preprint is available on XXXX
+
+The main contributions of this paper are as follows:
 1. We introduce and formalize the concept of decision-centric fairness for resource allocation optimization.
 2. We propose a decision-centric fairness approach to optimize classification models used in resource allocation.
 3. We introduce a decision-centric predictive performance metric for classification models.
@@ -45,7 +48,7 @@ pip install -r requirements.txt
 Please use the above in a newly created virtual environment to avoid clashing dependencies.
 
 
-## Instructions:
+## Instructions
 - Specify project configurations in [projectconfig.json](config/projectconfig.json)
 - Specify experiment configurations in [experimentconfig.json](config/experimentconfig.json)
 - In [main.ipynb](notebooks/main.ipynb):
