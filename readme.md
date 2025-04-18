@@ -2,13 +2,13 @@
 
 This paper proposes a decision-centric fairness approach for binary classification models used in resource allocation. It argues that fairness constraints should be applied only within the decision-making region, where predicted scores translate into real-world actions, rather than across the entire score distribution, thereby achieving fairer outcomes with minimal loss in predictive utility.
 
-A preprint is available on XXXX
-
 The main contributions of this paper are as follows:
 1. We introduce and formalize the concept of decision-centric fairness for resource allocation optimization.
 2. We propose a decision-centric fairness approach to optimize classification models used in resource allocation.
 3. We introduce a decision-centric predictive performance metric for classification models.
 4. We empirically compare our proposed decision-centric fairness methodology to a global fairness approach on multiple (semi-synthetic) datasets, identifying scenarios where — from a decision-centric evaluation perspective — focusing on fairness only where it truly matters outperforms imposing fairness everywhere.
+
+A preprint is available on XXXX
 
 ## Methodology  
 
