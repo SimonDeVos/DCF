@@ -8,7 +8,7 @@ The main contributions of this paper are as follows:
 3. We introduce a decision-centric predictive performance metric for classification models.
 4. We empirically compare our proposed decision-centric fairness methodology to a global fairness approach on multiple (semi-synthetic) datasets, identifying scenarios where — from a decision-centric evaluation perspective — focusing on fairness only where it truly matters outperforms imposing fairness everywhere.
 
-A preprint is available on XXXX
+A preprint is available on [ArXiv](https://arxiv.org/pdf/2504.20642)
 
 ## Methodology  
 
@@ -21,15 +21,15 @@ A preprint is available on XXXX
 <table align="center">
   <tr>
     <td align="center">
-      <img src="https://github.com/SimonDeVos/FairChurn/blob/master/examples/fig/density_0.5_0.7_0.0_True.gif" width="250">
+      <img src="https://github.com/SimonDeVos/DCF/blob/master/figures/03_methodology/telecomkaggle0.5_lam0.0.gif" width="250">
       <br><b>λ = 0.0</b>
     </td>
     <td align="center">
-      <img src="https://github.com/SimonDeVos/FairChurn/blob/master/examples/fig/density_0.5_0.7_0.3_True.gif" width="250">
+      <img src="https://github.com/SimonDeVos/DCF/blob/master/figures/03_methodology/telecomkaggle0.5_lam0.3.gif" width="250">
       <br><b>λ = 0.3</b>
     </td>
     <td align="center">
-      <img src="https://github.com/SimonDeVos/FairChurn/blob/master/examples/fig/density_0.5_0.7_0.6_True.gif" width="250">
+      <img src="https://github.com/SimonDeVos/DCF/blob/master/figures/03_methodology/telecomkaggle0.5_lam0.6.gif" width="250">
       <br><b>λ = 0.6</b>
     </td>
   </tr>
